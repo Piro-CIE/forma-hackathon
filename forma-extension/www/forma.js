@@ -15,45 +15,65 @@ const socket = new WebSocket("ws://localhost:3006");
 //     }
 // })
 
-const element = document.createElement("div");
-element.innerHTML = `Welcome to ${Forma.getProjectId()}`;
-document.body.appendChild(element);
+// const element = document.createElement("div");
+// element.innerHTML = `Welcome to ${Forma.getProjectId()}`;
+// document.body.appendChild(element);
 
-const button = document.createElement("button");
-button.textContent = 'Select a building & click';
-button.addEventListener('click', onButtonClick);
-document.body.appendChild(button);
+// const button = document.createElement("button");
+// button.textContent = 'Select a building & click';
+// button.addEventListener('click', onButtonClick);
+// document.body.appendChild(button);
 
-const btnpickpoint = document.createElement("button");
-btnpickpoint.textContent = 'pick a point';
-btnpickpoint.addEventListener('click', onButtonPickClick);
-document.body.appendChild(btnpickpoint);
+// const btnpickpoint = document.createElement("button");
+// btnpickpoint.textContent = 'pick a point';
+// btnpickpoint.addEventListener('click', onButtonPickClick);
+// document.body.appendChild(btnpickpoint);
 
-const divfloor = document.createElement("div");
-const btncreatefloor = document.createElement("button");
-btncreatefloor.textContent = 'create floor';
-btncreatefloor.addEventListener('click', onButtonCreatefloor);
+// const divfloor = document.createElement("div");
+// const btncreatefloor = document.createElement("button");
+// btncreatefloor.textContent = 'create floor';
+// btncreatefloor.addEventListener('click', onButtonCreatefloor);
 
-divfloor.appendChild(btncreatefloor);
-document.body.appendChild(divfloor);
-
-
+// divfloor.appendChild(btncreatefloor);
+// document.body.appendChild(divfloor);
 
 window.Forma = Forma;
 
-async function onButtonClick() {
+document.getElementById("btnPickSolid").addEventListener('click',onSelectButtonClick);
+document.getElementById("btnPickPoint").addEventListener('click',onButtonPickClick);
+document.getElementById("btnSend").addEventListener('click',onSendButtonClick);
+
+var sendgeometry;
+
+async function onSelectButtonClick() {
 
 
-    const selectedPaths = await Forma.selection.getSelection()
-    console.log(selectedPaths)
-    const buildingPaths = await Forma.geometry.getPathsByCategory({ category: "building" })
-    const selectedBuildingPaths = selectedPaths.filter(path => buildingPaths.includes(path))
-    const numberOfSelectedBuildings = selectedBuildingPaths.length
-    console.log(`Nombre de bâtiments : ${numberOfSelectedBuildings}`)
+  var selectedPaths;
+  //console.log(selectedPaths);
+  while (selectedPaths === undefined) {
+    const selection = await Forma.selection.getSelection()
+    if(selection.length > 0)
+    {
+      //console.log("selection active")
+      selectedPaths = selection;
+    }
+  }
+  //console.log("fin selection")
 
-    const position = await Forma.geometry.getTriangles({path: selectedPaths[0]});
-    //console.log(position)
-    socket.send(position);
+  const solid = await Forma.geometry.getTriangles({path: selectedPaths[0]});
+  //console.log(solid)
+  sendgeometry = solid;
+
+    // const selectedPaths = await Forma.selection.getSelection()
+    // console.log(selectedPaths)
+    // const buildingPaths = await Forma.geometry.getPathsByCategory({ category: "building" })
+    // const selectedBuildingPaths = selectedPaths.filter(path => buildingPaths.includes(path))
+    // const numberOfSelectedBuildings = selectedBuildingPaths.length
+    // console.log(`Nombre de bâtiments : ${numberOfSelectedBuildings}`)
+
+    
+    
+    //socket.send(position);
     
     // const selectedbuilding = selectedBuildingPaths[0]
     // const urnBuild = selectedbuilding.split("/")[1];
@@ -63,6 +83,13 @@ async function onButtonClick() {
     // const siteLimitFootprint = await Forma.geometry.getFootprint({ path: selectedBuildingPaths[0] })
     // console.log(siteLimitFootprint);
 
+  }
+
+  async function onSendButtonClick() {
+
+    //console.log(sendgeometry);
+    socket.send(sendgeometry);
+    alert('Data Sent')
   }
 
 async function onButtonPickClick() {
@@ -83,6 +110,11 @@ async function onButtonPickClick() {
       console.log(`Latitude : ${latitude}`)
       console.log(`Longitude : ${longitude}`)
 
+
+      document.getElementById("latitude-val").innerText = `${latitude}`
+      document.getElementById("longitude-val").innerText = `${longitude}`
+      document.getElementById("elevation-val").innerText = `${calculateZ}`
+
       const dy = pos.y
       const dx = pos.x
       const r_earth = 6371000.0
@@ -95,7 +127,7 @@ async function onButtonPickClick() {
         console.log(`new longitude : ${new_longitude}`)
 
         //y_dist = abs(a.lat - b.lat) * 111000;
-//x_dist = abs(a.lon - b.lon) * 111000 * cos(a.lat);
+        //x_dist = abs(a.lon - b.lon) * 111000 * cos(a.lat);
 
         const distx = (new_longitude - longitude)*Math.cos(latitude * pi/180)*r_earth / (180 / pi)
         const disty = (new_latitude - latitude)*r_earth / (180 / pi)

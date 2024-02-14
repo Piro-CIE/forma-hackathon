@@ -4,14 +4,94 @@
     <style>
         div {
             display: flex;
-            height: 100px;
+            height: 30px;
             align-items: center;
             justify-content: center;
         }
     </style>
+    <link rel="stylesheet" href="https://app.autodeskforma.eu/design-system/v2/forma/styles/base.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+    <script type="module" src="https://app.autodeskforma.eu/design-system/v2/weave/components/button/weave-button.js"></script>
+    <script type="module" src="https://app.autodeskforma.eu/design-system/v2/weave/components/icons/weave-icons.js"></script>
+
     <script type="module" src="./forma.js"></script>
+    <script type="module">
+        import {Forma} from "https://esm.sh/forma-embedded-view-sdk/auto";
+        document.Forma = Forma;
+    </script>
 </head>
 <body>
-    <button id="geometry-btn">Send geometry</button>
+
+    <div style="justify-content: left;" >
+        <p style="min-width: 150px;">
+            Select Geometry
+        </p>
+
+        <weave-button id="btnPickSolid" variant="outlined" density="high">
+            <span slot="icon" class="material-symbols-outlined" style="color: black;">
+                    arrow_selector_tool
+                </span>
+        
+        <span slot="explain">
+          Select a Building in the viewer
+        </span>
+        </weave-button>
+
+
+    </div>
+
+    <div style="justify-content: left;">
+        <p style="min-width: 150px;">
+            Select Point
+        </p>
+
+        <weave-button id="btnPickPoint" variant="outlined" density="high">
+            <span slot="icon" class="material-symbols-outlined" style="color: black;">
+                point_scan
+                </span>
+        
+        <span slot="explain">
+          Pick a point for the basement
+        </span>
+        </weave-button>
+
+    </div>
+
+    <div style="justify-content: left; margin-left: 10px;">
+        <p style="min-width: 80px;">
+            - Latitude :
+        </p>
+        <p id="latitude-val"></p>
+    </div>
+
+    <div style="justify-content: left; margin-left: 10px;">
+        <p style="min-width: 80px;">
+            - Longitude :
+        </p>
+        <p id="longitude-val"></p>
+    </div>
+
+    <div style="justify-content: left; margin-left: 10px;">
+        <p style="min-width: 80px;">
+            - Elevation :
+        </p>
+        <p id="elevation-val"></p>
+    </div>
+
+    <div style="justify-content: right;">
+        <weave-button id="btnSend" variant="solid" iconposition="left" density="high">
+            <forma-check slot="icon"></forma-check>
+        Send
+        <span slot="explain">
+          Send geometry and geolocalisation to Ipad for AR
+        </span>
+        </weave-button>
+    </div>
+
+    
+
+
+
 </body>
 </html>
