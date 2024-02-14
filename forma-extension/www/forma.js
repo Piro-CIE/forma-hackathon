@@ -4,16 +4,21 @@ import { Forma } from "https://esm.sh/forma-embedded-view-sdk/auto";
 // Create WebSocket connection.
 const socket = new WebSocket("ws://localhost:3006");
 
-// document.getElementById('geometry-btn').addEventListener('click', async ()=>{
-//     const buildingPaths =  await Forma.geometry.getPathsByCategory({category: "building"})
-//     // console.log(buildingPath)
+document.getElementById('geometry-btn').addEventListener('click', async ()=>{
+    const buildingPaths =  await Forma.geometry.getPathsByCategory({category: "building"})
+    // console.log(buildingPath)
 
-//     for(const path of buildingPaths )
-//     {
-//         const position = await Forma.geometry.getTriangles({path});
-//         socket.send(position);
-//     }
-// })
+    for(const path of buildingPaths )
+    {
+        const position = await Forma.geometry.getTriangles({path});
+        await new Promise(resolve => {
+            setTimeout(()=>{
+                socket.send(position);
+                resolve()
+            }, 50)
+        });
+    }
+})
 
 // const element = document.createElement("div");
 // element.innerHTML = `Welcome to ${Forma.getProjectId()}`;
