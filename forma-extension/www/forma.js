@@ -1,35 +1,20 @@
 import { Forma } from "https://esm.sh/forma-embedded-view-sdk/auto";
 
-// const element = document.createElement("div");
-// element.innerHTML = `Welcome to ${Forma.getProjectId()}`;
-// document.body.appendChild(element);
-// window.Forma = Forma;
-
 
 // Create WebSocket connection.
 const socket = new WebSocket("ws://localhost:3006");
 
-// // Connection opened
-// socket.addEventListener("open", (event) => {
-//   socket.send("Hello Server!");
-// });
+// document.getElementById('geometry-btn').addEventListener('click', async ()=>{
+//     const buildingPaths =  await Forma.geometry.getPathsByCategory({category: "building"})
+//     // console.log(buildingPath)
 
-// // Listen for messages
-// socket.addEventListener("message", (event) => {
-//   console.log("Message from server ", event.data);
-// });
+//     for(const path of buildingPaths )
+//     {
+//         const position = await Forma.geometry.getTriangles({path});
+//         socket.send(position);
+//     }
+// })
 
-
-document.getElementById('geometry-btn').addEventListener('click', async ()=>{
-    const buildingPaths =  await Forma.geometry.getPathsByCategory({category: "building"})
-    // console.log(buildingPath)
-
-    for(const path of buildingPaths )
-    {
-        const position = await Forma.geometry.getTriangles({path});
-        socket.send(position);
-    }
-})
 const element = document.createElement("div");
 element.innerHTML = `Welcome to ${Forma.getProjectId()}`;
 document.body.appendChild(element);
@@ -60,18 +45,23 @@ async function onButtonClick() {
 
 
     const selectedPaths = await Forma.selection.getSelection()
+    console.log(selectedPaths)
     const buildingPaths = await Forma.geometry.getPathsByCategory({ category: "building" })
     const selectedBuildingPaths = selectedPaths.filter(path => buildingPaths.includes(path))
     const numberOfSelectedBuildings = selectedBuildingPaths.length
     console.log(`Nombre de bâtiments : ${numberOfSelectedBuildings}`)
-    
-    const selectedbuilding = selectedBuildingPaths[0]
-    const urnBuild = selectedbuilding.split("/")[1];
-    console.log(selectedbuilding);
-    console.log(urnBuild);
 
-    const siteLimitFootprint = await Forma.geometry.getFootprint({ path: selectedBuildingPaths[0] })
-    console.log(siteLimitFootprint);
+    const position = await Forma.geometry.getTriangles({path: selectedPaths[0]});
+    //console.log(position)
+    socket.send(position);
+    
+    // const selectedbuilding = selectedBuildingPaths[0]
+    // const urnBuild = selectedbuilding.split("/")[1];
+    // console.log(selectedbuilding);
+    // console.log(urnBuild);
+
+    // const siteLimitFootprint = await Forma.geometry.getFootprint({ path: selectedBuildingPaths[0] })
+    // console.log(siteLimitFootprint);
 
   }
 
